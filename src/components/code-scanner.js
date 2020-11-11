@@ -73,7 +73,7 @@ oom.define('q3s-code-scanner', class Q3SCodeScanner extends HTMLElement {
   }
 
   connectedCallback() {
-    this._resize()
+    // this._resize()
     this.startVideo()
     window.addEventListener('resize', this._onResize, false)
   }
@@ -125,7 +125,7 @@ oom.define('q3s-code-scanner', class Q3SCodeScanner extends HTMLElement {
 
   async _getVideoDevice() {
     const stream = await navigator.mediaDevices.getUserMedia(this._videoConstraints)
-    const [videoTrack] = stream.getTracks()
+    const [videoTrack] = stream.getVideoTracks()
 
     this._stream = stream
     this._videoTrack = videoTrack

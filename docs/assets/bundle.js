@@ -150,10 +150,12 @@ window.addEventListener('MDCDrawer:closed', () => {
   }
 });
 
-const { location: location$3, history } = window;
-const q3sTopAppBarElm = document.querySelector('.q3s-top-app-bar');
+const { document: document$2, location: location$3, history } = window;
+const q3sTopAppBarElm = document$2.querySelector('.q3s-top-app-bar');
 const q3sTopAppBar = MDCTopAppBar.attachTo(q3sTopAppBarElm);
-q3sTopAppBar.setScrollTarget(document.querySelector('.q3s-main-content'));
+const basicTitle = location$3.hostname === 'q3s.github.io' ? 'QR Share' : 'QR Share (DEV)';
+document$2.title = basicTitle;
+q3sTopAppBar.setScrollTarget(document$2.querySelector('.q3s-main-content'));
 q3sTopAppBar.listen('MDCTopAppBar:nav', () => {
   q3sDrawer.open = !q3sDrawer.open;
 });
@@ -197,12 +199,12 @@ window.addEventListener('q3s-code-scanner:stopVideo', () => {
   buttons.map(item => { item.classList.remove('q3s-secondary-bg-opacity'); });
 }, false);
 
-const { document: document$2, navigator: navigator$1 } = window;
+const { document: document$3, navigator: navigator$1 } = window;
 oom.define('q3s-code-scanner', class Q3SCodeScanner extends HTMLElement {
   _codeReader = new ZXing.BrowserMultiFormatReader()
-  _canvas = document$2.createElement('canvas')
+  _canvas = document$3.createElement('canvas')
   _context = this._canvas.getContext('2d')
-  _img = document$2.createElement('img')
+  _img = document$3.createElement('img')
   _clientWidth = 0
   _clientHeight = 0
   _videoMinSize = 0
@@ -260,7 +262,6 @@ oom.define('q3s-code-scanner', class Q3SCodeScanner extends HTMLElement {
     this._onResize = () => this.resizeEven();
   }
   connectedCallback() {
-    this._resize();
     this.startVideo();
     window.addEventListener('resize', this._onResize, false);
   }
@@ -305,7 +306,7 @@ oom.define('q3s-code-scanner', class Q3SCodeScanner extends HTMLElement {
   }
   async _getVideoDevice() {
     const stream = await navigator$1.mediaDevices.getUserMedia(this._videoConstraints);
-    const [videoTrack] = stream.getTracks();
+    const [videoTrack] = stream.getVideoTracks();
     this._stream = stream;
     this._videoTrack = videoTrack;
   }
