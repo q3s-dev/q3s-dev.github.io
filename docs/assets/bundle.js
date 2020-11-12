@@ -207,15 +207,12 @@ oom.define('q3s-code-scanner', class Q3SCodeScanner extends HTMLElement {
   _img = document$3.createElement('img')
   _clientWidth = 0
   _clientHeight = 0
-  _videoMinSize = 0
   _videoConstraints = {
     video: {
       facingMode: 'environment',
-      width: { min: this._videoMinSize },
-      height: { min: this._videoMinSize },
+      width: { min: 0 },
+      height: { min: 0 },
       advanced: [
-        { width: { min: 4096 }, height: { min: 2160 } },
-        { width: { min: 3840 }, height: { min: 2160 } },
         { width: { min: 3200 }, height: { min: 2400 } },
         { width: { min: 1920 }, height: { min: 1080 } },
         { width: { min: 1280 }, height: { min: 720 } },
