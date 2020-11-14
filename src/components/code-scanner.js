@@ -31,7 +31,7 @@ oom.define('q3s-code-scanner', class Q3SCodeScanner extends HTMLElement {
         // { height: { min: 2160 } },
         // { height: { min: 1920 } },
         // { height: { min: 1680 } },
-        // { height: { min: 1440 } },
+        { height: { min: 1440 } },
         { height: { min: 1200 } },
         { height: { min: 960 } },
         { height: { min: 720 } },
