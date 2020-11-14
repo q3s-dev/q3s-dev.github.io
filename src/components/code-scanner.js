@@ -30,7 +30,7 @@ oom.define('q3s-code-scanner', class Q3SCodeScanner extends HTMLElement {
         // { height: { min: 2400 } },
         // { height: { min: 2160 } },
         // { height: { min: 1920 } },
-        // { height: { min: 1680 } },
+        { height: { min: 1680 } },
         { height: { min: 1440 } },
         { height: { min: 1200 } },
         { height: { min: 960 } },
@@ -189,7 +189,7 @@ oom.define('q3s-code-scanner', class Q3SCodeScanner extends HTMLElement {
       this._canvas.height = this._constraintHeight
       this._canvas.width = this._constraintWidth
 
-      this.testResultElm.innerHTML = `SCREEN=${this._clientWidth}X${this._clientHeight}\n` +
+      this.testResultElm.innerHTML = `SCREEN=${this.cwvc}X${this.chvc}\n` +
         `CAM=${rw}X${rh}\nVIDOE=${cwv}X${chv}\n` +
         `OFFSET=${this._offsetTop}X${this._offsetLeft}`
     }
