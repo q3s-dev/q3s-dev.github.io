@@ -213,8 +213,8 @@ oom.define('q3s-code-scanner', class Q3SCodeScanner extends HTMLElement {
         ...this._sourceCapture,
         ...this._destinationCapture
       )
-      this._captureAreaElm.style.backgroundImage =
-        `url('${this._canvas.toDataURL('image/png')}')`
+      // this._captureAreaElm.style.backgroundImage =
+      //   `url('${this._canvas.toDataURL('image/png')}')`
       try {
         const luminanceSource = new ZXing.HTMLCanvasElementLuminanceSource(this._canvas)
         const hybridBinarizer = new ZXing.HybridBinarizer(luminanceSource)
