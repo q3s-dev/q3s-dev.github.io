@@ -231,6 +231,7 @@ oom.define('q3s-code-scanner', class Q3SCodeScanner extends HTMLElement {
   _resizeTimeout = null
   _decodeTimeout = null
   _decodeInterval = 300
+  _currentScale = 1
   _diffHeight = 0
   _diffWidth = 0
   _constraintTop = 0
@@ -336,9 +337,11 @@ oom.define('q3s-code-scanner', class Q3SCodeScanner extends HTMLElement {
       if (diffH < diffW) {
         this._videoElm.style.width = '';
         this._videoElm.style.height = '100%';
+        this._currentScale = diffH;
       } else {
         this._videoElm.style.width = '100%';
         this._videoElm.style.height = '';
+        this._currentScale = diffW;
       }
       const { clientHeight: chv, clientWidth: cwv } = this._videoElm;
       const diffHeight = (chv - chvc) / 2 ^ 0;
@@ -384,13 +387,14 @@ oom.define('q3s-code-scanner', class Q3SCodeScanner extends HTMLElement {
       this._context.drawImage(this._videoElm,
         this._offsetLeft,
         this._offsetTop,
-        this._constraintWidth,
-        this._constraintHeight,
+        this._constraintWidth * this._currentScale,
+        this._constraintHeight * this._currentScale,
         0, 0,
         this._constraintWidth,
         this._constraintHeight
       );
       this._img.src = this._canvas.toDataURL('image/png');
+      this._captureAreaElm.style.backgroundImage = `url('${this._img.src}')`;
       this._codeReader.decodeFromImage(this._img)
         .then(result => {
           this.testResultElm.innerHTML = result;
