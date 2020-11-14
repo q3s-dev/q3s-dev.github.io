@@ -3,51 +3,45 @@ import { ZXing } from '@zxing/library'
 import { MDCRipple } from '@material/ripple'
 import './code-scanner.scss'
 
-const { document, navigator } = window
+const { screen, document, navigator } = window
 
 oom.define('q3s-code-scanner', class Q3SCodeScanner extends HTMLElement {
 
-  _codeReader = new ZXing.BrowserMultiFormatReader()
+  _codeReader = new ZXing.BrowserQRCodeReader()
   _canvas = document.createElement('canvas')
   _context = this._canvas.getContext('2d')
-  _img = document.createElement('img')
 
-  _clientWidth = 0
-  _clientHeight = 0
   _videoConstraints = {
     video: {
       facingMode: 'environment',
       width: { min: 0 },
       height: { min: 0 },
       advanced: [
-        { height: { min: 3120 } },
-        { height: { min: 2880 } },
-        { height: { min: 2640 } },
-        { height: { min: 2400 } },
-        { height: { min: 2160 } },
-        { height: { min: 1920 } },
-        { height: { min: 1680 } },
-        { height: { min: 1440 } },
-        { height: { min: 1200 } },
-        { height: { min: 960 } },
-        { height: { min: 720 } },
-        { height: { min: 480 } }
+        // Базовые размеры
+        // { height: { min: 3120 } },
+        // { height: { min: 2880 } },
+        // { height: { min: 2640 } },
+        // { height: { min: 2400 } },
+        // { height: { min: 2160 } },
+        // { height: { min: 1920 } },
+        // { height: { min: 1680 } },
+        // { height: { min: 1440 } },
+        // { height: { min: 1200 } },
+        // { height: { min: 960 } },
+        // { height: { min: 720 } },
+        // { height: { min: 480 } }
       ]
     }
   }
 
+  // x, y, w, h
+  _sourceCapture = [0, 0, 0, 0]
+  _destinationCapture = [0, 0, 0, 0]
+  _currentScale = 1
+
   _resizeTimeout = null
   _decodeTimeout = null
-  _decodeInterval = 300
-  _currentScale = 1
-  _diffHeight = 0
-  _diffWidth = 0
-  _constraintTop = 0
-  _constraintLeft = 0
-  _offsetTop = 0
-  _offsetLeft = 0
-  _constraintHeight = 0
-  _constraintWidth = 0
+  _decodeInterval = 100
 
   template = () => oom
     .div({ class: 'q3s-code-scanner__video-container' },
@@ -77,7 +71,7 @@ oom.define('q3s-code-scanner', class Q3SCodeScanner extends HTMLElement {
   }
 
   connectedCallback() {
-    // this._resize()
+    this._prepareConstraints()
     this.startVideo()
     window.addEventListener('resize', this._onResize, false)
   }
@@ -91,33 +85,23 @@ oom.define('q3s-code-scanner', class Q3SCodeScanner extends HTMLElement {
     }
   }
 
+  _prepareConstraints() {
+    const { advanced } = this._videoConstraints.video
+    const { width, height } = screen
+
+    advanced.push({ width: { min: 0 }, height: { min: 0 } })
+    advanced.push({ width: { min: width / 1.5 }, height: { min: height / 1.5 } })
+    advanced.push({ width: { min: width }, height: { min: height } })
+    advanced.push({ width: { min: width * 1.5 }, height: { min: height * 1.5 } })
+    advanced.push({ width: { min: width * 2 }, height: { min: height * 2 } })
+  }
+
   resizeEven() {
     if (!this._resizeTimeout) {
       this._resizeTimeout = setTimeout(() => {
         this._resizeTimeout = null
-        // this._resize()
         this.alignmentVideo()
-      }, 100)
-    }
-  }
-
-  _resize() {
-    if (this._videoContainerElm) {
-      this._clientWidth = this._videoContainerElm.clientWidth
-      this._clientHeight = this._videoContainerElm.clientHeight
-      this._videoMinSize = Math.max(this._clientWidth, this._clientHeight)
-      if (this._videoConstraints.video.width.min !== this._videoMinSize) {
-        this._videoConstraints.video.width.min = 1920
-        this._videoConstraints.video.height.min = 1080
-        //   this._videoMinSize
-        if (this._videoTrack) {
-          this._videoTrack.applyConstraints(this._videoConstraints.video)
-            .then(() => this.alignmentVideo())
-            .catch(error => this.videoCameraError(error))
-        }
-      } else {
-        this.alignmentVideo()
-      }
+      }, this._decodeInterval)
     }
   }
 
@@ -143,7 +127,7 @@ oom.define('q3s-code-scanner', class Q3SCodeScanner extends HTMLElement {
         e.currentTarget.removeEventListener('canplay', _handler)
         self.alignmentVideo()
         window.dispatchEvent(new Event('q3s-code-scanner:startVideo'))
-        self.decodeFromVideo()
+        self.decodeFromCanvasFrame()
       })(this))
     } else {
       this.stopVideo()
@@ -152,94 +136,98 @@ oom.define('q3s-code-scanner', class Q3SCodeScanner extends HTMLElement {
 
   alignmentVideo() {
     if (this._videoTrack) {
-      const { clientHeight: chvc, clientWidth: cwvc } = this._videoContainerElm
-      const { height: rh, width: rw } = this._videoTrack.getSettings()
+      const { clientWidth: cwvc, clientHeight: chvc } = this._videoContainerElm
+      const { width: rw, height: rh } = this._videoTrack.getSettings()
+      // Соотношение сторон видеопотока и экрана
       const diffW = rw / cwvc
       const diffH = rh / chvc
 
-      if (diffH < diffW) {
-        this._videoElm.style.width = ''
-        this._videoElm.style.height = '100%'
-        this._currentScale = diffH
-      } else {
+      // Растянуть видео по наименьшей стороне, запомнить изменение масштаба
+      if (diffW < diffH) {
         this._videoElm.style.width = '100%'
         this._videoElm.style.height = ''
         this._currentScale = diffW
-      }
-
-      const { clientHeight: chv, clientWidth: cwv } = this._videoElm
-      const diffHeight = (chv - chvc) / 2 ^ 0
-      const diffWidth = (cwv - cwvc) / 2 ^ 0
-      const ratioHeight = rh / chv
-      const ratioWidth = rw / cwv
-
-      if (diffHeight > 0) {
-        this._diffHeight = diffHeight
-        this._videoElm.style.marginTop = `-${diffHeight}px`
       } else {
-        this._diffHeight = 0
-        this._videoElm.style.marginTop = ''
+        this._videoElm.style.width = ''
+        this._videoElm.style.height = '100%'
+        this._currentScale = diffH
       }
+
+      const { clientWidth: cwv, clientHeight: chv } = this._videoElm
+      let diffWidth = (cwv - cwvc) / 2 ^ 0
+      let diffHeight = (chv - chvc) / 2 ^ 0
+
+      // Центрировать видео на экране, запомнить смешение
       if (diffWidth > 0) {
-        this._diffWidth = diffWidth
         this._videoElm.style.marginLeft = `-${diffWidth}px`
       } else {
-        this._diffWidth = 0
+        diffWidth = 0
         this._videoElm.style.marginLeft = ''
       }
+      if (diffHeight > 0) {
+        this._videoElm.style.marginTop = `-${diffHeight}px`
+      } else {
+        diffHeight = 0
+        this._videoElm.style.marginTop = ''
+      }
 
-      this._constraintTop = this._constraintBGElm.clientHeight
-      this._constraintLeft = this._constraintBGElm.clientWidth
-
-      this._constraintHeight = this._captureAreaElm.clientHeight * ratioHeight ^ 0
-      this._constraintWidth = this._captureAreaElm.clientWidth * ratioWidth ^ 0
-      this._offsetTop = (this._diffHeight + this._constraintTop) * ratioHeight ^ 0
-      this._offsetLeft = (this._diffWidth + this._constraintLeft) * ratioWidth ^ 0
-
-      this._canvas.height = this._constraintHeight
-      this._canvas.width = this._constraintWidth
+      // Сохраняем соотношения захватываемой и видимой на экране области
+      this._sourceCapture = [
+        (this._constraintBGElm.clientWidth + diffWidth) * this._currentScale ^ 0,
+        (this._constraintBGElm.clientHeight + diffHeight) * this._currentScale ^ 0,
+        this._captureAreaElm.clientWidth * this._currentScale ^ 0,
+        this._captureAreaElm.clientHeight * this._currentScale ^ 0
+      ]
+      this._destinationCapture = [0, 0,
+        this._captureAreaElm.clientWidth,
+        this._captureAreaElm.clientHeight
+      ]
+      // Проставляем размер холста в соответствии с видимой областью
+      this._canvas.width = this._captureAreaElm.clientWidth
+      this._canvas.height = this._captureAreaElm.clientHeight
 
       this.testResultElm.innerHTML = `CONTAINER=${cwvc}X${chvc}\n` +
         `SCREEN=${window.screen.width}X${window.screen.height}\n` +
         `CAM=${rw}X${rh}\nVIDOE=${cwv}X${chv}\n` +
-        `OFFSET=${this._offsetTop}X${this._offsetLeft}`
+        `S=${JSON.stringify(this._sourceCapture)}\n` +
+        `D=${JSON.stringify(this._destinationCapture)}`
     }
   }
 
-  decodeFromVideo() {
+  decodeFromCanvasFrame() {
     if (this._decodeTimeout) {
       clearTimeout(this._decodeTimeout)
     }
-    this._decodeTimeout = setTimeout(() => this._decodeFromVideo(), this._decodeInterval)
+
+    this._decodeTimeout = setTimeout(() => {
+      window.requestAnimationFrame(() => {
+        this._decodeFromCanvasFrame()
+      })
+    }, this._decodeInterval)
   }
 
-  _decodeFromVideo() {
-    if (this._videoTrack && this._videoElm) {
+  _decodeFromCanvasFrame() {
+    if (this._videoTrack) {
       this._context.drawImage(this._videoElm,
-        this._offsetLeft,
-        this._offsetTop,
-        this._constraintWidth * this._currentScale,
-        this._constraintHeight * this._currentScale,
-        0, 0,
-        this._constraintWidth,
-        this._constraintHeight
+        ...this._sourceCapture,
+        ...this._destinationCapture
       )
-      this._img.src = this._canvas.toDataURL('image/png')
-      this._captureAreaElm.style.backgroundImage = `url('${this._img.src}')`
-      this._codeReader.decodeFromImage(this._img)
-        .then(result => {
-          this.testResultElm.innerHTML = result
-          this.decodeFromVideo()
-        })
-        .catch(error => {
-          if (error instanceof ZXing.NotFoundException) {
-            this.decodeFromVideo()
-          } else {
-            this.videoCameraError(error)
-          }
-        }).then(() => {
-          this._codeReader.reset()
-        })
+      this._captureAreaElm.style.backgroundImage =
+        `url('${this._canvas.toDataURL('image/png')}')`
+      try {
+        const luminanceSource = new ZXing.HTMLCanvasElementLuminanceSource(this._canvas)
+        const hybridBinarizer = new ZXing.HybridBinarizer(luminanceSource)
+        const result = this._codeReader.decodeBitmap(hybridBinarizer)
+
+        this.testResultElm.innerHTML = result
+        this.decodeFromCanvasFrame()
+      } catch (error) {
+        if (error instanceof ZXing.NotFoundException) {
+          this.decodeFromCanvasFrame()
+        } else {
+          this.videoCameraError(error)
+        }
+      }
     } else {
       this.stopVideo()
     }
