@@ -263,6 +263,8 @@ oom.define('q3s-code-scanner', class Q3SCodeScanner extends HTMLElement {
     advanced.push({ width: { min: 0 }, height: { min: 0 } });
     advanced.push({ width: { min: width / 1.5 }, height: { min: height / 1.5 } });
     advanced.push({ width: { min: width }, height: { min: height } });
+    advanced.push({ width: { min: width * 1.5 }, height: { min: height * 1.5 } });
+    advanced.push({ width: { min: width * 2 }, height: { min: height * 2 } });
   }
   resizeEven() {
     if (!this._resizeTimeout) {

@@ -106,6 +106,10 @@ q3s-code-scanner {
     grid-template-rows: calc(48px + 1.5rem) 60vmin 1fr;
   }
 }
+.q3s-code-scanner__capture-area-constraint-bg {
+  background-color: #000a;
+}
+
 .q3s-code-scanner__capture-area {
   border: rgba(255, 255, 255, 0.7) 1px solid;
   background-repeat: no-repeat;
