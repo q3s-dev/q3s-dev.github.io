@@ -329,18 +329,17 @@ oom.define('q3s-code-scanner', class Q3SCodeScanner extends HTMLElement {
         diffHeight = 0;
         this._videoElm.style.marginTop = '';
       }
+      const captureWidth = this._captureAreaElm.clientWidth * this._currentScale ^ 0;
+      const captureHeight = this._captureAreaElm.clientHeight * this._currentScale ^ 0;
       this._sourceCapture = [
         (this._constraintBGElm.clientWidth + diffWidth) * this._currentScale ^ 0,
         (this._constraintBGElm.clientHeight + diffHeight) * this._currentScale ^ 0,
-        this._captureAreaElm.clientWidth * this._currentScale ^ 0,
-        this._captureAreaElm.clientHeight * this._currentScale ^ 0
+        captureWidth,
+        captureHeight
       ];
-      this._destinationCapture = [0, 0,
-        this._captureAreaElm.clientWidth,
-        this._captureAreaElm.clientHeight
-      ];
-      this._canvas.width = this._captureAreaElm.clientWidth;
-      this._canvas.height = this._captureAreaElm.clientHeight;
+      this._destinationCapture = [0, 0, captureWidth, captureHeight];
+      this._canvas.width = captureWidth;
+      this._canvas.height = captureHeight;
       this.testResultElm.innerHTML = `CONTAINER=${cwvc}X${chvc}\n` +
         `SCREEN=${window.screen.width}X${window.screen.height}\n` +
         `CAM=${rw}X${rh}\nVIDOE=${cwv}X${chv}\n` +
