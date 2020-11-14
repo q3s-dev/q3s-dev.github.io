@@ -90,7 +90,7 @@ oom.define('q3s-code-scanner', class Q3SCodeScanner extends HTMLElement {
     const { height } = screen
 
     // advanced.push({ height: { min: height * 2 } })
-    // advanced.push({ height: { min: height * 1.5 } })
+    advanced.push({ height: { min: height * 1.5 } })
     advanced.push({ height: { min: height } })
     advanced.push({ height: { min: height / 1.5 } })
     advanced.push({ height: { min: height / 2 } })

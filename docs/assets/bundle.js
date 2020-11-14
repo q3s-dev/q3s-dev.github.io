@@ -260,6 +260,7 @@ oom.define('q3s-code-scanner', class Q3SCodeScanner extends HTMLElement {
   _prepareConstraints() {
     const { advanced } = this._videoConstraints.video;
     const { height } = screen$1;
+    advanced.push({ height: { min: height * 1.5 } });
     advanced.push({ height: { min: height } });
     advanced.push({ height: { min: height / 1.5 } });
     advanced.push({ height: { min: height / 2 } });
