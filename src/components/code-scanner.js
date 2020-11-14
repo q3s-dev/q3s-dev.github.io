@@ -222,7 +222,11 @@ oom.define('q3s-code-scanner', class Q3SCodeScanner extends HTMLElement {
         this.testResultElm.innerHTML = result
         this.decodeFromCanvasFrame()
       } catch (error) {
-        if (error instanceof ZXing.NotFoundException) {
+        const ifNotFound = error instanceof ZXing.NotFoundException
+        const isChecksumOrFormatError = error instanceof ZXing.ChecksumException ||
+          error instanceof ZXing.FormatException
+
+        if (ifNotFound || isChecksumOrFormatError) {
           this.decodeFromCanvasFrame()
         } else {
           this.videoCameraError(error)
