@@ -20,13 +20,8 @@ oom.define('q3s-code-scanner', class Q3SCodeScanner extends HTMLElement {
       width: { min: 0 },
       height: { min: 0 },
       advanced: [
-        // { width: { min: 4096 }, height: { min: 2160 } },
-        // { width: { min: 3840 }, height: { min: 2160 } },
-        // { width: { min: 3200 }, height: { min: 2400 } },
-        // { width: { min: 1920 }, height: { min: 1080 } },
-        // { width: { min: 1280 }, height: { min: 720 } },
-        // { width: { min: 1024 }, height: { min: 768 } },
-
+        { height: { min: 3120 } },
+        { height: { min: 2880 } },
         { height: { min: 2640 } },
         { height: { min: 2400 } },
         { height: { min: 2160 } },
@@ -157,8 +152,19 @@ oom.define('q3s-code-scanner', class Q3SCodeScanner extends HTMLElement {
   alignmentVideo() {
     if (this._videoTrack) {
       const { clientHeight: chvc, clientWidth: cwvc } = this._videoContainerElm
-      const { clientHeight: chv, clientWidth: cwv } = this._videoElm
       const { height: rh, width: rw } = this._videoTrack.getSettings()
+      const diffW = rw / cwvc
+      const diffH = rh / chvc
+
+      if (diffH < diffW) {
+        this._videoElm.style.width = ''
+        this._videoElm.style.height = '100%'
+      } else {
+        this._videoElm.style.width = '100%'
+        this._videoElm.style.height = ''
+      }
+
+      const { clientHeight: chv, clientWidth: cwv } = this._videoElm
       const diffHeight = (chv - chvc) / 2 ^ 0
       const diffWidth = (cwv - cwvc) / 2 ^ 0
       const ratioHeight = rh / chv
