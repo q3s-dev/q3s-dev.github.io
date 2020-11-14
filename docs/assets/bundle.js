@@ -259,10 +259,12 @@ oom.define('q3s-code-scanner', class Q3SCodeScanner extends HTMLElement {
   }
   _prepareConstraints() {
     const { advanced } = this._videoConstraints.video;
-    const { width, height } = screen$1;
-    advanced.push({ width: { min: 0 }, height: { min: 0 } });
-    advanced.push({ width: { min: width / 1.5 }, height: { min: height / 1.5 } });
-    advanced.push({ width: { min: width }, height: { min: height } });
+    const { height } = screen$1;
+    advanced.push({ height: { min: height } });
+    advanced.push({ height: { min: height / 1.5 } });
+    advanced.push({ height: { min: height / 2 } });
+    advanced.push({ height: { min: 0 } });
+    debugger
   }
   resizeEven() {
     if (!this._resizeTimeout) {
