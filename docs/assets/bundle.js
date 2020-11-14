@@ -264,7 +264,6 @@ oom.define('q3s-code-scanner', class Q3SCodeScanner extends HTMLElement {
     advanced.push({ height: { min: height / 1.5 } });
     advanced.push({ height: { min: height / 2 } });
     advanced.push({ height: { min: 0 } });
-    debugger
   }
   resizeEven() {
     if (!this._resizeTimeout) {
