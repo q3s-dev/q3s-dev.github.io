@@ -352,7 +352,7 @@ oom.define('q3s-code-scanner', class Q3SCodeScanner extends HTMLElement {
       this._offsetLeft = (this._diffWidth + this._constraintLeft) * ratioWidth ^ 0;
       this._canvas.height = this._constraintHeight;
       this._canvas.width = this._constraintWidth;
-      this.testResultElm.innerHTML = `SCREEN=${this.cwvc}X${this.chvc}\n` +
+      this.testResultElm.innerHTML = `SCREEN=${cwvc}X${chvc}\n` +
         `CAM=${rw}X${rh}\nVIDOE=${cwv}X${chv}\n` +
         `OFFSET=${this._offsetTop}X${this._offsetLeft}`;
     }
