@@ -193,10 +193,10 @@ window.addEventListener('q3s-code-scanner:stopVideo', () => {
 const buttons = [...document.querySelectorAll('.q3s-code-scanner__button')];
 buttons.map(item => MDCRipple.attachTo(item));
 window.addEventListener('q3s-code-scanner:startVideo', () => {
-  buttons.map(item => { item.classList.add('q3s-secondary-bg-opacity'); });
+  buttons.map(item => item.classList.add('q3s-secondary-bg-opacity'));
 }, false);
 window.addEventListener('q3s-code-scanner:stopVideo', () => {
-  buttons.map(item => { item.classList.remove('q3s-secondary-bg-opacity'); });
+  buttons.map(item => item.classList.remove('q3s-secondary-bg-opacity'));
 }, false);
 
 const { screen: screen$1, document: document$3, navigator: navigator$1 } = window;
@@ -499,7 +499,7 @@ oom.define('q3s-editor-controller', class Q3SEditorController extends HTMLElemen
       )), select => { this._typeSelect = select; })
   connectedCallback() {
     const select = new MDCSelect(this._typeSelect);
-    console.log(this._typeSelect);
+    console.log(select, this._typeSelect);
   }
 });
 
