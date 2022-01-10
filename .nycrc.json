@@ -1,0 +1,12 @@
+{
+  "extends": "@nodutilus/project-config/nyc",
+  "include": [
+    "@q3s",
+    "test"
+  ],
+  "exclude": [
+    "docs/**",
+    "test/web.js",
+    "**/*.d.ts"
+  ]
+}

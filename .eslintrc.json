@@ -1,0 +1,22 @@
+{
+  "extends": "@nodutilus",
+  "env": {
+    "browser": true,
+    "node": false
+  },
+  "overrides": [
+    {
+      "files": [
+        "./test/**"
+      ],
+      "env": {
+        "browser": true,
+        "node": true
+      }
+    }
+  ],
+  "ignorePatterns": [
+    "/_deprecated/",
+    "*.d.ts"
+  ]
+}
