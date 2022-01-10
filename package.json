@@ -1,0 +1,29 @@
+{
+  "name": "q3s",
+  "type": "module",
+  "description": "QR Share",
+  "license": "Unlicense",
+  "repository": "github:q3s/q3s.github.io",
+  "devDependencies": {
+    "@nodutilus/project-config": "latest",
+    "@nodutilus/test": "latest",
+    "@notml/core": "latest",
+    "@rollup/plugin-node-resolve": "latest",
+    "@rollup/plugin-commonjs": "latest",
+    "rollup": "latest",
+    "rollup-plugin-terser": "latest",
+    "rollup-plugin-cleanup": "latest",
+    "jsdom": "latest",
+    "fastify": "latest",
+    "fastify-static": "latest",
+    "pako": "^2.0.4",
+    "qrcode": "^1.5.0",
+    "@zxing/library": "^0.19.1",
+    "dexie": "^3.2.0"
+  },
+  "scripts": {
+    "test": "node test",
+    "web-test": "node test/web",
+    "build": "npx rollup --config"
+  }
+}
