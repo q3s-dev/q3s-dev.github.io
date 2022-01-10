@@ -1,0 +1,28 @@
+{
+  "name": "@q3s/core",
+  "version": "0.0.1-pre.1",
+  "description": "QR Share - Quick secure share source",
+  "keywords": [
+    "qr",
+    "share"
+  ],
+  "license": "Unlicense",
+  "repository": "github:q3s/q3s.github.io",
+  "type": "module",
+  "engines": {
+    "node": ">=16"
+  },
+  "files": [
+    "lib",
+    "core.js",
+    "types.d.ts"
+  ],
+  "exports": {
+    ".": "./core.js"
+  },
+  "module": "./core.js",
+  "types": "./types.d.ts",
+  "publishConfig": {
+    "access": "public"
+  }
+}
