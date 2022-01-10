@@ -23,7 +23,7 @@
   },
   "scripts": {
     "test": "node test",
-    "web-test": "node test/web",
+    "test-lib": "node test/lib",
     "build": "npx rollup --config"
   }
 }
