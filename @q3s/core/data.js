@@ -7,28 +7,17 @@ const x64len = x64alphabet.length
 const allx64Chars = x64alphabet + partDelimiter
 
 
-/**
- * @param {number} value
- * @returns {string}
- */
+/** @type {import('@q3s/core/data').intToX16Pos2} */
 function intToX16Pos2(value) {
   return ('0' + value.toString(16)).slice(-2)
 }
 
-
-/**
- * @param {number} value
- * @returns {string}
- */
+/** @type {import('@q3s/core/data').intToX16Pos3} */
 function intToX16Pos3(value) {
   return ('00' + value.toString(16)).slice(-3)
 }
 
-
-/**
- * @param {number} value
- * @returns {string}
- */
+/** @type {import('@q3s/core/data').intToX64} */
 function intToX64(value) {
   let result = ''
 
@@ -40,11 +29,7 @@ function intToX64(value) {
   return result
 }
 
-
-/**
- * @param {string} value
- * @returns {number}
- */
+/** @type {import('@q3s/core/data').x64ToInt} */
 function x64ToInt(value) {
   let result = 0
 
@@ -56,11 +41,7 @@ function x64ToInt(value) {
   return result
 }
 
-
-/**
- * @param {number} value
- * @returns {string}
- */
+/** @type {import('@q3s/core/data').intToX64Pos2} */
 function intToX64Pos2(value) {
   return ('0' + intToX64(value)).slice(-2)
 }
@@ -105,14 +86,15 @@ function decodeURLx64(x64text) {
   return new Uint8Array(uint8Array)
 }
 
-
-export {
+export const __internal = {
   allx64Chars,
   intToX16Pos2,
   intToX16Pos3,
   intToX64,
   x64ToInt,
-  intToX64Pos2,
+  intToX64Pos2
+}
+export {
   encodeURLx64,
   decodeURLx64
 }

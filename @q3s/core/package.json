@@ -13,12 +13,13 @@
     "node": ">=16"
   },
   "files": [
-    "lib",
+    "data.js",
     "core.js",
     "types.d.ts"
   ],
   "exports": {
-    ".": "./core.js"
+    ".": "./core.js",
+    "./data": "./data.js"
   },
   "module": "./core.js",
   "types": "./types.d.ts",

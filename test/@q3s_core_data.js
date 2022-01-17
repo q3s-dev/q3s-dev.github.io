@@ -1,59 +1,70 @@
-import { Test, assert } from '@nodutilus/test'
+// @ts-ignore
+import { assert, Test } from '@nodutilus/test'
 import {
-  intToX16Pos2, intToX16Pos3, intToX64, x64ToInt,
-  intToX64Pos2, encodeURLx64, decodeURLx64
-} from '../../lib/x64url.js'
+  __internal, encodeURLx64, decodeURLx64
+} from '@q3s/core/data'
 
 
 /**
  * Проверка работы со сжатием URL
  */
-export class Tx64url extends Test {
+export class Tq3sCoreData extends Test {
 
   /** Приведение к числу с основанием 16, максимум 2 знака, 0-255 */
   ['intToX16Pos2']() {
-    assert.equal(intToX16Pos2(1), '01')
-    assert.equal(intToX16Pos2(15), '0f')
-    assert.equal(intToX16Pos2(16), '10')
-    assert.equal(intToX16Pos2(255), 'ff')
+    assert.equal(__internal.intToX16Pos2(1), '01')
+    assert.equal(__internal.intToX16Pos2(15), '0f')
+    assert.equal(__internal.intToX16Pos2(16), '10')
+    assert.equal(__internal.intToX16Pos2(255), 'ff')
   }
 
   /** Приведение к числу с основанием 16, максимум 3 знака, 0-4095 */
   ['intToX16Pos3']() {
-    assert.equal(intToX16Pos3(1), '001')
-    assert.equal(intToX16Pos3(15), '00f')
-    assert.equal(intToX16Pos3(16), '010')
-    assert.equal(intToX16Pos3(255), '0ff')
-    assert.equal(intToX16Pos3(4095), 'fff')
+    assert.equal(__internal.intToX16Pos3(1), '001')
+    assert.equal(__internal.intToX16Pos3(15), '00f')
+    assert.equal(__internal.intToX16Pos3(16), '010')
+    assert.equal(__internal.intToX16Pos3(255), '0ff')
+    assert.equal(__internal.intToX16Pos3(4095), 'fff')
   }
 
   /** Приведение к числу с основанием 64 */
   ['intToX64']() {
-    assert.equal(intToX64(1), '1')
-    assert.equal(intToX64(63), '_')
-    assert.equal(intToX64(64), '10')
+    assert.equal(__internal.intToX64(1), '1')
+    assert.equal(__internal.intToX64(63), '_')
+    assert.equal(__internal.intToX64(64), '10')
   }
 
   /** Восстановление числа с основанием 64 в 10 */
   ['x64ToInt']() {
-    assert.equal(x64ToInt('1'), 1)
-    assert.equal(x64ToInt('_'), 63)
-    assert.equal(x64ToInt('10'), 64)
+    assert.equal(__internal.x64ToInt('1'), 1)
+    assert.equal(__internal.x64ToInt('_'), 63)
+    assert.equal(__internal.x64ToInt('10'), 64)
   }
 
   /** Приведение к числу с основанием 64, максимум 2 знака, 0-4095 */
   ['intToX64Pos2']() {
-    assert.equal(intToX64Pos2(1), '01')
-    assert.equal(intToX64Pos2(15), '0f')
-    assert.equal(intToX64Pos2(16), '0g')
-    assert.equal(intToX64Pos2(64), '10')
-    assert.equal(intToX64Pos2(255), '3_')
-    assert.equal(intToX64Pos2(4095), '__')
+    assert.equal(__internal.intToX64Pos2(1), '01')
+    assert.equal(__internal.intToX64Pos2(15), '0f')
+    assert.equal(__internal.intToX64Pos2(16), '0g')
+    assert.equal(__internal.intToX64Pos2(64), '10')
+    assert.equal(__internal.intToX64Pos2(255), '3_')
+    assert.equal(__internal.intToX64Pos2(4095), '__')
   }
 
   /** Проеобразуем 8-битный массив в строку */
   ['encodeURLx64']() {
     const encoder = new TextEncoder()
+
+    const txt = encoder.encode('Тест QabgJt61Qo')
+    console.time('url64')
+    const url64 = encodeURLx64(txt)
+    console.timeEnd('url64')
+    console.time('base64')
+    const base64 = btoa(txt)
+    console.timeEnd('base64')
+
+    console.log(url64)
+    console.log(base64)
 
     assert.equal(encodeURLx64(encoder.encode('Тест')), 'QabgJt61Qo.2')
     assert.equal(encodeURLx64(encoder.encode('Тест1')), 'QabgJt61Qo8N')
