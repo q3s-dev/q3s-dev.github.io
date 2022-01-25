@@ -1,3 +1,5 @@
+import { pako } from './external.js'
+
 const x64alphabet = '0123456789' +
   'abcdefghijklmnopqrstuvwxyz' +
   'ABCDEFGHIJKLMNOPQRSTUVWXYZ' +
@@ -46,16 +48,10 @@ function intToX64Pos2(value) {
   return ('0' + intToX64(value)).slice(-2)
 }
 
-
-/**
- * Преобразует 8-битный массив в строку,
- *  содержащую только разрешенные для URL символы.
- * Последовательность в кодировке c основанием 64.
- *
- * @param {Uint8Array} uint8Array
- * @returns {string}
- */
+/** @type {import('@q3s/core/data').encodeURLx64} */
 function encodeURLx64(uint8Array) {
+  // TODO: Подумать над оптимизацией алгоритма
+
   const x16 = uint8Array
     .reduce((data, item) => (data += intToX16Pos2(item)), '')
     .match(/.{1,3}/g)
@@ -65,16 +61,9 @@ function encodeURLx64(uint8Array) {
   return x64 + (last ? partDelimiter + last : '')
 }
 
-
-/**
- * Преобразует строку в кодировке c основанием 64,
- *  содержащую только разрешенные для URL символы, в 8-битный массив.
- * Обратный метод для encodeURLx64.
- *
- * @param {string} x64text
- * @returns {Uint8Array}
- */
+/** @type {import('@q3s/core/data').decodeURLx64} */
 function decodeURLx64(x64text) {
+  // TODO: Подумать над оптимизацией алгоритма
   const [x64, last] = x64text.split(partDelimiter)
   const x16 = x64
     .match(/.{1,2}/g)
@@ -86,6 +75,49 @@ function decodeURLx64(x64text) {
   return new Uint8Array(uint8Array)
 }
 
+/**
+ * Сжатие текста с данными для использования в URL,
+ *  использует только разрешенный для URL символы.
+ *
+ * @param {string} text
+ * @returns {string}
+ */
+function deflate(text) {
+  const rawData = pako.deflateRaw(text)
+  const result = encodeURLx64(rawData)
+
+  return result
+}
+
+/**
+ * Распаковка сжатого текста с данными из URL.
+ * Обратный метод для deflate.
+ *
+ * @param {string} text
+ * @returns {string}
+ */
+function inflate(text) {
+  const rawData = decodeURLx64(text)
+  const result = pako.inflateRaw(rawData, { to: 'string' })
+
+  return result
+}
+
+function deflateB64(text) {
+  const rawData = pako.deflateRaw(text)
+  const result = Buffer.from(rawData).toString('base64url')
+
+  return result
+}
+
+function inflateB64(text) {
+  const rawData = Buffer.from(text, 'base64url')
+  const result = pako.inflateRaw(rawData, { to: 'string' })
+
+  return result
+}
+
+
 export const __internal = {
   allx64Chars,
   intToX16Pos2,
@@ -96,5 +128,7 @@ export const __internal = {
 }
 export {
   encodeURLx64,
-  decodeURLx64
+  decodeURLx64,
+  deflate, deflateB64,
+  inflate, inflateB64
 }

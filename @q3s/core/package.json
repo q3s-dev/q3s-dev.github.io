@@ -13,16 +13,21 @@
     "node": ">=16"
   },
   "files": [
-    "data.js",
     "core.js",
+    "data.js",
+    "external.js",
     "types.d.ts"
   ],
   "exports": {
     ".": "./core.js",
-    "./data": "./data.js"
+    "./data": "./data.js",
+    "./external": "./external.js"
   },
   "module": "./core.js",
   "types": "./types.d.ts",
+  "scripts": {
+    "prepack": "cd ../.. && npm run build"
+  },
   "publishConfig": {
     "access": "public"
   }

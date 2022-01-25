@@ -1,7 +1,7 @@
 // @ts-ignore
 import { assert, Test } from '@nodutilus/test'
 import {
-  __internal, encodeURLx64, decodeURLx64
+  __internal, encodeURLx64, decodeURLx64, deflate, inflate, deflateB64, inflateB64
 } from '@q3s/core/data'
 
 
@@ -51,20 +51,33 @@ export class Tq3sCoreData extends Test {
     assert.equal(__internal.intToX64Pos2(4095), '__')
   }
 
+  /** Проверка из примера в описании алгоритма */
+  ['encodeURLx64/decodeURLx64 - base example']() {
+    const input = new Uint8Array([0, 1, 2, 4, 8, 16, 32, 64, 128, 255, 255, 10, 1])
+    const output = '004210wg8420__Ya.1'
+    const encode = encodeURLx64(input)
+    const decode = decodeURLx64(encode)
+    const text = 'Тест {"asd":true} : тест тест !";%"№:?*('
+    const base64 = Buffer.from(text, 'utf-8').toString('base64url')
+    const decodeB64 = Buffer.from(base64, 'base64url').toString('utf-8')
+    const test = encodeURLx64(Buffer.from(text, 'utf-8'))
+    const def = deflate(text)
+    const inf = inflate(def)
+    const defB64 = deflateB64(text)
+    const infB64 = inflateB64(defB64)
+
+    console.log(base64)
+    console.log(test)
+    console.log(def)
+    console.log(defB64)
+
+    assert.deepEqual(input, decode)
+    assert.deepEqual(output, encode)
+  }
+
   /** Проеобразуем 8-битный массив в строку */
   ['encodeURLx64']() {
     const encoder = new TextEncoder()
-
-    const txt = encoder.encode('Тест QabgJt61Qo')
-    console.time('url64')
-    const url64 = encodeURLx64(txt)
-    console.timeEnd('url64')
-    console.time('base64')
-    const base64 = btoa(txt)
-    console.timeEnd('base64')
-
-    console.log(url64)
-    console.log(base64)
 
     assert.equal(encodeURLx64(encoder.encode('Тест')), 'QabgJt61Qo.2')
     assert.equal(encodeURLx64(encoder.encode('Тест1')), 'QabgJt61Qo8N')

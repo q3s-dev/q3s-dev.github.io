@@ -10,3 +10,4 @@ node_modules/
 
 # Generate output
 /coverage
+/@q3s/core/external.js
