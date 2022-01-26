@@ -53,17 +53,36 @@ export class Tq3sCoreData extends Test {
 
   /** Проверка из примера в описании алгоритма */
   ['encodeURLx64/decodeURLx64 - base example']() {
+    const inner = 'Привет й34ой387:[]хъХЪ{}""%К*№?СИЙ?*К(*?№ЙЕ%К(?*Й№КП(ТЙ?КП'
+    const encoder = new TextEncoder()
+    const decoder = new TextDecoder()
+    const u8 = encoder.encode(inner)
+    const txtChars = String.fromCharCode(...u8)
+    const b64btoa = window.btoa(txtChars)
+    const outeratob = window.atob(b64btoa)
+    const outeru8 = new Uint8Array(Array.from(txtChars).map(i => i.charCodeAt(0)))
+    const outer = decoder.decode(outeru8)
+    const b64Buffer = Buffer.from(inner, 'utf-8').toString('base64')
+    const outerBuffer = Buffer.from(b64Buffer, 'base64url').toString('utf-8')
+
+    assert.equal(txtChars, outeratob)
+    assert.deepEqual(u8, outeru8)
+    assert.equal(inner, outer)
+    assert.equal(b64btoa, b64Buffer)
+    assert.equal(inner, outerBuffer)
+
+    console.log(b64btoa)
+
     const input = new Uint8Array([0, 1, 2, 4, 8, 16, 32, 64, 128, 255, 255, 10, 1])
     const output = '004210wg8420__Ya.1'
     const encode = encodeURLx64(input)
     const decode = decodeURLx64(encode)
-    const text = 'Тест {"asd":true} : тест тест !";%"№:?*('
-    const base64 = Buffer.from(text, 'utf-8').toString('base64url')
+    const base64 = Buffer.from(inner, 'utf-8').toString('base64url')
     const decodeB64 = Buffer.from(base64, 'base64url').toString('utf-8')
-    const test = encodeURLx64(Buffer.from(text, 'utf-8'))
-    const def = deflate(text)
+    const test = encodeURLx64(Buffer.from(inner, 'utf-8'))
+    const def = deflate(inner)
     const inf = inflate(def)
-    const defB64 = deflateB64(text)
+    const defB64 = deflateB64(inner)
     const infB64 = inflateB64(defB64)
 
     console.log(base64)
