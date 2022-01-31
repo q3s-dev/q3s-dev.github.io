@@ -105,13 +105,30 @@ function inflate(text) {
 
 function deflateB64(text) {
   const rawData = pako.deflateRaw(text)
-  const result = Buffer.from(rawData).toString('base64url')
+  let chars = ''
+
+  for (let i = 0; i < rawData.length; i++) {
+    chars += String.fromCharCode(rawData[i])
+  }
+
+  const result = window.btoa(chars)
+    .replace('=', '')
+    .replace('+', '-')
+    .replace('/', '_')
 
   return result
 }
 
 function inflateB64(text) {
-  const rawData = Buffer.from(text, 'base64url')
+  const chars = window.atob(text
+    .replace('-', '+')
+    .replace('_', '/'))
+  const rawData = []
+
+  for (let i = 0; i < chars.length; i++) {
+    rawData.push(chars.charCodeAt(i))
+  }
+
   const result = pako.inflateRaw(rawData, { to: 'string' })
 
   return result
