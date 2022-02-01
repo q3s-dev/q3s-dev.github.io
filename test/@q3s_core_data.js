@@ -1,8 +1,8 @@
 // @ts-ignore
 import { assert, Test } from '@nodutilus/test'
-import {
-  __internal, encodeURLx64, decodeURLx64, deflate, inflate, deflateB64, inflateB64
-} from '@q3s/core/data'
+import { deflate, inflate } from '@q3s/core/data'
+import { pako } from '../@q3s/core/external.js'
+import { deflateX64, inflateX64 } from '../_deprecated/lib/data.js'
 
 
 /**
@@ -10,112 +10,46 @@ import {
  */
 export class Tq3sCoreData extends Test {
 
-  /** Приведение к числу с основанием 16, максимум 2 знака, 0-255 */
-  ['intToX16Pos2']() {
-    assert.equal(__internal.intToX16Pos2(1), '01')
-    assert.equal(__internal.intToX16Pos2(15), '0f')
-    assert.equal(__internal.intToX16Pos2(16), '10')
-    assert.equal(__internal.intToX16Pos2(255), 'ff')
+  /** Проверка из примера в описании алгоритма на соответсвие base64url из Node.js */
+  ['deflate, inflate - base64url']() {
+    const text = 'Привет й34ой387:[]хъХЪ{}""%К*№?СИЙ?*К(*?№ЙЕ%К(?*Й№КП(ТЙ?КП'
+    const uint8Array = pako.deflateRaw(text)
+    const base64urlNode = Buffer.from(uint8Array).toString('base64url')
+    const outerTextNode = pako.inflateRaw(Buffer.from(base64urlNode, 'base64url'), { to: 'string' })
+    const base64url = deflate(text)
+    const outerText = inflate(base64url)
+
+    assert.equal(text, outerTextNode)
+    assert.equal(text, outerText)
+    assert.equal(base64urlNode, base64url)
   }
 
-  /** Приведение к числу с основанием 16, максимум 3 знака, 0-4095 */
-  ['intToX16Pos3']() {
-    assert.equal(__internal.intToX16Pos3(1), '001')
-    assert.equal(__internal.intToX16Pos3(15), '00f')
-    assert.equal(__internal.intToX16Pos3(16), '010')
-    assert.equal(__internal.intToX16Pos3(255), '0ff')
-    assert.equal(__internal.intToX16Pos3(4095), 'fff')
-  }
+  /** Примеры сжатия и восстановления данных */
+  ['deflate, inflate - examples']() {
+    assert.equal(deflate('Тест'), 'u7DowtaLjRebAA')
+    assert.equal(deflate('Тест1'), 'u7DowtaLjRebDAE')
+    assert.equal(deflate('Тест123'), 'u7DowtaLjRebDI2MAQ')
+    assert.equal(deflate("{ 'start': { 'line': 3, 'column': 0 }, 'end': { 'line': 5, 'column': 1 } }"),
+      'q1ZQLy5JLCpRt1KoVlDPycxLBbKMdRTUk_NzSnPzgBwDhVogNzUvBUWJKbISQ4VahVoA')
 
-  /** Приведение к числу с основанием 64 */
-  ['intToX64']() {
-    assert.equal(__internal.intToX64(1), '1')
-    assert.equal(__internal.intToX64(63), '_')
-    assert.equal(__internal.intToX64(64), '10')
-  }
+    assert.equal(deflateX64('Тест'), 'KX3EMJqbzhur')
+    assert.equal(deflateX64('Тест1'), 'KX3EMJqbzhur30.1')
+    assert.equal(deflateX64('Тест123'), 'KX3EMJqbzhur38Sc.1')
+    assert.equal(deflateX64("{ 'start': { 'line': 3, 'column': 0 }, 'end': { 'line': 5, 'column': 1 } }"),
+      'GRpgbOV9b2FhJRaElB3fOsNb1racthjkA_dPiDfPw1M3xlEwdPkL1km9ar8igUlqxlE0')
 
-  /** Восстановление числа с основанием 64 в 10 */
-  ['x64ToInt']() {
-    assert.equal(__internal.x64ToInt('1'), 1)
-    assert.equal(__internal.x64ToInt('_'), 63)
-    assert.equal(__internal.x64ToInt('10'), 64)
-  }
 
-  /** Приведение к числу с основанием 64, максимум 2 знака, 0-4095 */
-  ['intToX64Pos2']() {
-    assert.equal(__internal.intToX64Pos2(1), '01')
-    assert.equal(__internal.intToX64Pos2(15), '0f')
-    assert.equal(__internal.intToX64Pos2(16), '0g')
-    assert.equal(__internal.intToX64Pos2(64), '10')
-    assert.equal(__internal.intToX64Pos2(255), '3_')
-    assert.equal(__internal.intToX64Pos2(4095), '__')
-  }
+    assert.equal(inflate('u7DowtaLjRebAA'), 'Тест')
+    assert.equal(inflate('u7DowtaLjRebDAE'), 'Тест1')
+    assert.equal(inflate('u7DowtaLjRebDI2MAQ'), 'Тест123')
+    assert.equal(inflate('q1ZQLy5JLCpRt1KoVlDPycxLBbKMdRTUk_NzSnPzgBwDhVogNzUvBUWJKbISQ4VahVoA'),
+      "{ 'start': { 'line': 3, 'column': 0 }, 'end': { 'line': 5, 'column': 1 } }")
 
-  /** Проверка из примера в описании алгоритма */
-  ['encodeURLx64/decodeURLx64 - base example']() {
-    const inner = 'Привет й34ой387:[]хъХЪ{}""%К*№?СИЙ?*К(*?№ЙЕ%К(?*Й№КП(ТЙ?КП'
-    const encoder = new TextEncoder()
-    const decoder = new TextDecoder()
-    const u8 = encoder.encode(inner)
-    const txtChars = String.fromCharCode(...u8)
-    const b64btoa = window.btoa(txtChars)
-    const outeratob = window.atob(b64btoa)
-    const outeru8 = new Uint8Array(Array.from(txtChars).map(i => i.charCodeAt(0)))
-    const outer = decoder.decode(outeru8)
-    const b64Buffer = Buffer.from(inner, 'utf-8').toString('base64')
-    const outerBuffer = Buffer.from(b64Buffer, 'base64url').toString('utf-8')
-
-    assert.equal(txtChars, outeratob)
-    assert.deepEqual(u8, outeru8)
-    assert.equal(inner, outer)
-    assert.equal(b64btoa, b64Buffer)
-    assert.equal(inner, outerBuffer)
-
-    console.log(b64btoa)
-
-    const input = new Uint8Array([0, 1, 2, 4, 8, 16, 32, 64, 128, 255, 255, 10, 1])
-    const output = '004210wg8420__Ya.1'
-    const encode = encodeURLx64(input)
-    const decode = decodeURLx64(encode)
-    const base64 = Buffer.from(inner, 'utf-8').toString('base64url')
-    const decodeB64 = Buffer.from(base64, 'base64url').toString('utf-8')
-    const test = encodeURLx64(Buffer.from(inner, 'utf-8'))
-    const def = deflate(inner)
-    const inf = inflate(def)
-    const defB64 = deflateB64(inner)
-    const infB64 = inflateB64(defB64)
-
-    console.log(base64)
-    console.log(test)
-    console.log(def)
-    console.log(defB64)
-
-    assert.deepEqual(input, decode)
-    assert.deepEqual(output, encode)
-  }
-
-  /** Проеобразуем 8-битный массив в строку */
-  ['encodeURLx64']() {
-    const encoder = new TextEncoder()
-
-    assert.equal(encodeURLx64(encoder.encode('Тест')), 'QabgJt61Qo.2')
-    assert.equal(encodeURLx64(encoder.encode('Тест1')), 'QabgJt61Qo8N')
-    assert.equal(encodeURLx64(encoder.encode('Тест123')), 'QabgJt61Qo8Ncz.3')
-    assert.equal(encodeURLx64(new Uint8Array([255, 255, 255])), '____')
-    assert.equal(encodeURLx64(new Uint8Array([1, 15, 16, 255])), '0gYg.ff')
-    assert.equal(encodeURLx64(new Uint8Array([1, 15, 16, 1])), '0gYg.1')
-  }
-
-  /** Проеобразуем строку в 8-битный массив */
-  ['decodeURLx64']() {
-    const decoder = new TextDecoder()
-
-    assert.equal(decoder.decode(decodeURLx64('QabgJt61Qo.2')), 'Тест')
-    assert.equal(decoder.decode(decodeURLx64('QabgJt61Qo8N')), 'Тест1')
-    assert.equal(decoder.decode(decodeURLx64('QabgJt61Qo8Ncz.3')), 'Тест123')
-    assert.deepEqual(decodeURLx64('____'), new Uint8Array([255, 255, 255]))
-    assert.deepEqual(decodeURLx64('0gYg.ff'), new Uint8Array([1, 15, 16, 255]))
-    assert.deepEqual(decodeURLx64('0gYg.1'), new Uint8Array([1, 15, 16, 1]))
+    assert.equal(inflateX64('KX3EMJqbzhur'), 'Тест')
+    assert.equal(inflateX64('KX3EMJqbzhur30.1'), 'Тест1')
+    assert.equal(inflateX64('KX3EMJqbzhur38Sc.1'), 'Тест123')
+    assert.equal(inflateX64('GRpgbOV9b2FhJRaElB3fOsNb1racthjkA_dPiDfPw1M3xlEwdPkL1km9ar8igUlqxlE0'),
+      "{ 'start': { 'line': 3, 'column': 0 }, 'end': { 'line': 5, 'column': 1 } }")
   }
 
 }
