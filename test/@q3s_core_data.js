@@ -32,7 +32,7 @@ export class Tq3sCoreData extends Test {
     assert.equal(deflate("{ 'start': { 'line': 3, 'column': 0 }, 'end': { 'line': 5, 'column': 1 } }"),
       'q1ZQLy5JLCpRt1KoVlDPycxLBbKMdRTUk_NzSnPzgBwDhVogNzUvBUWJKbISQ4VahVoA')
 
-    assert.equal(deflateX64('Тест'), 'KX3EMJqbzhur')
+    assert.equal(deflateX64('Тест'), 'KX3EMJqbzhur.0')
     assert.equal(deflateX64('Тест1'), 'KX3EMJqbzhur30.1')
     assert.equal(deflateX64('Тест123'), 'KX3EMJqbzhur38Sc.1')
     assert.equal(deflateX64("{ 'start': { 'line': 3, 'column': 0 }, 'end': { 'line': 5, 'column': 1 } }"),
@@ -45,7 +45,7 @@ export class Tq3sCoreData extends Test {
     assert.equal(inflate('q1ZQLy5JLCpRt1KoVlDPycxLBbKMdRTUk_NzSnPzgBwDhVogNzUvBUWJKbISQ4VahVoA'),
       "{ 'start': { 'line': 3, 'column': 0 }, 'end': { 'line': 5, 'column': 1 } }")
 
-    assert.equal(inflateX64('KX3EMJqbzhur'), 'Тест')
+    assert.equal(inflateX64('KX3EMJqbzhur.0'), 'Тест')
     assert.equal(inflateX64('KX3EMJqbzhur30.1'), 'Тест1')
     assert.equal(inflateX64('KX3EMJqbzhur38Sc.1'), 'Тест123')
     assert.equal(inflateX64('GRpgbOV9b2FhJRaElB3fOsNb1racthjkA_dPiDfPw1M3xlEwdPkL1km9ar8igUlqxlE0'),

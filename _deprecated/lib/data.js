@@ -55,7 +55,7 @@ function encodeURLx64(uint8Array) {
   const x16 = uint8Array
     .reduce((data, item) => (data += intToX16Pos2(item)), '')
     .match(/.{1,3}/g)
-  const last = x16[x16.length - 1].length < 3 ? x16.pop().replace(/^0+/, '') : ''
+  const last = x16[x16.length - 1].length < 3 ? x16.pop().replace(/^0*([\d]+)$/, '$1') : ''
   const x64 = x16.reduce((data, item) => (data += intToX64Pos2(parseInt(item, 16))), '')
 
   return x64 + (last ? partDelimiter + last : '')
