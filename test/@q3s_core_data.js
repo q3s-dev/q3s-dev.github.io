@@ -2,7 +2,7 @@
 import { assert, Test } from '@nodutilus/test'
 import { deflate, inflate } from '@q3s/core/data'
 import { pako } from '../@q3s/core/external.js'
-import { deflateX64, inflateX64 } from '../_deprecated/lib/data.js'
+// import { deflateX64, inflateX64 } from '../_deprecated/lib/data.js'
 
 
 /**
@@ -18,10 +18,15 @@ export class Tq3sCoreData extends Test {
     const outerTextNode = pako.inflateRaw(Buffer.from(base64urlNode, 'base64url'), { to: 'string' })
     const base64url = deflate(text)
     const outerText = inflate(base64url)
+    const base64native = Buffer.from(text, 'utf-8').toString('base64url')
 
     assert.equal(text, outerTextNode)
     assert.equal(text, outerText)
     assert.equal(base64urlNode, base64url)
+    assert.equal(base64url,
+      'uzD_YsOFHRc2Xdh6sUnhwk5jkwv7gKSFuVV07MXWi10Xll5YVV2rpKR6YZbWo5Zp9hcWXphxYaa91oVZGlr2QIELMy9MBcppAEVmgrizLszXuLAIqALEAgA')
+    assert.equal(base64native,
+      '0J_RgNC40LLQtdGCINC5MzTQvtC5Mzg3Oltd0YXRitCl0Kp7fSIiJdCaKuKElj_QodCY0Jk_KtCaKCo_4oSW0JnQlSXQmig_KtCZ4oSW0JrQnyjQotCZP9Ca0J8')
   }
 
   /** Примеры сжатия и восстановления данных */
@@ -32,12 +37,12 @@ export class Tq3sCoreData extends Test {
     assert.equal(deflate("{ 'start': { 'line': 3, 'column': 0 }, 'end': { 'line': 5, 'column': 1 } }"),
       'q1ZQLy5JLCpRt1KoVlDPycxLBbKMdRTUk_NzSnPzgBwDhVogNzUvBUWJKbISQ4VahVoA')
 
-    assert.equal(deflateX64('Тест'), 'KX3EMJqbzhur.0')
-    assert.equal(deflateX64('Тест1'), 'KX3EMJqbzhur30.1')
-    assert.equal(deflateX64('Тест123'), 'KX3EMJqbzhur38Sc.1')
-    assert.equal(deflateX64("{ 'start': { 'line': 3, 'column': 0 }, 'end': { 'line': 5, 'column': 1 } }"),
-      'GRpgbOV9b2FhJRaElB3fOsNb1racthjkA_dPiDfPw1M3xlEwdPkL1km9ar8igUlqxlE0')
-
+    // deprecated
+    // assert.equal(deflateX64('Тест'), 'KX3EMJqbzhur.0')
+    // assert.equal(deflateX64('Тест1'), 'KX3EMJqbzhur30.1')
+    // assert.equal(deflateX64('Тест123'), 'KX3EMJqbzhur38Sc.1')
+    // assert.equal(deflateX64("{ 'start': { 'line': 3, 'column': 0 }, 'end': { 'line': 5, 'column': 1 } }"),
+    //   'GRpgbOV9b2FhJRaElB3fOsNb1racthjkA_dPiDfPw1M3xlEwdPkL1km9ar8igUlqxlE0')
 
     assert.equal(inflate('u7DowtaLjRebAA'), 'Тест')
     assert.equal(inflate('u7DowtaLjRebDAE'), 'Тест1')
@@ -45,11 +50,12 @@ export class Tq3sCoreData extends Test {
     assert.equal(inflate('q1ZQLy5JLCpRt1KoVlDPycxLBbKMdRTUk_NzSnPzgBwDhVogNzUvBUWJKbISQ4VahVoA'),
       "{ 'start': { 'line': 3, 'column': 0 }, 'end': { 'line': 5, 'column': 1 } }")
 
-    assert.equal(inflateX64('KX3EMJqbzhur.0'), 'Тест')
-    assert.equal(inflateX64('KX3EMJqbzhur30.1'), 'Тест1')
-    assert.equal(inflateX64('KX3EMJqbzhur38Sc.1'), 'Тест123')
-    assert.equal(inflateX64('GRpgbOV9b2FhJRaElB3fOsNb1racthjkA_dPiDfPw1M3xlEwdPkL1km9ar8igUlqxlE0'),
-      "{ 'start': { 'line': 3, 'column': 0 }, 'end': { 'line': 5, 'column': 1 } }")
+    // deprecated
+    // assert.equal(inflateX64('KX3EMJqbzhur.0'), 'Тест')
+    // assert.equal(inflateX64('KX3EMJqbzhur30.1'), 'Тест1')
+    // assert.equal(inflateX64('KX3EMJqbzhur38Sc.1'), 'Тест123')
+    // assert.equal(inflateX64('GRpgbOV9b2FhJRaElB3fOsNb1racthjkA_dPiDfPw1M3xlEwdPkL1km9ar8igUlqxlE0'),
+    //   "{ 'start': { 'line': 3, 'column': 0 }, 'end': { 'line': 5, 'column': 1 } }")
   }
 
 }
