@@ -22,9 +22,9 @@
     "dexie": "^3.2.0"
   },
   "scripts": {
-    "pre-test": "npm run build && node test/pre-test",
+    "build": "npx rollup --config",
+    "pre-test": "node test/pre-test",
     "test": "node test",
-    "test-web": "node test/web.js",
-    "build": "npx rollup --config"
+    "test-web": "node test/web.js"
   }
 }
