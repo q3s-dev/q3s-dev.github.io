@@ -20,7 +20,6 @@
   ],
   "exports": {
     ".": "./core.js",
-    "./data": "./data.js",
     "./external": "./external.js"
   },
   "module": "./core.js",

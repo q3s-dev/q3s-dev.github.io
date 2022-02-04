@@ -1,7 +1,6 @@
 // @ts-ignore
 import { assert, Test } from '@nodutilus/test'
-import { deflate, inflate } from '@q3s/core/data'
-import { pako } from '../@q3s/core/external.js'
+import { external, deflate, inflate } from '@q3s/core'
 // import { deflateX64, inflateX64 } from '../_deprecated/lib/data.js'
 
 
@@ -13,9 +12,9 @@ export class Tq3sCoreData extends Test {
   /** Проверка из примера в описании алгоритма на соответсвие base64url из Node.js */
   ['deflate, inflate - base64url']() {
     const text = 'Привет й34ой387:[]хъХЪ{}""%К*№?СИЙ?*К(*?№ЙЕ%К(?*Й№КП(ТЙ?КП'
-    const uint8Array = pako.deflateRaw(text)
+    const uint8Array = external.pako.deflateRaw(text)
     const base64urlNode = Buffer.from(uint8Array).toString('base64url')
-    const outerTextNode = pako.inflateRaw(Buffer.from(base64urlNode, 'base64url'), { to: 'string' })
+    const outerTextNode = external.pako.inflateRaw(Buffer.from(base64urlNode, 'base64url'), { to: 'string' })
     const base64url = deflate(text)
     const outerText = inflate(base64url)
     const base64native = Buffer.from(text, 'utf-8').toString('base64url')

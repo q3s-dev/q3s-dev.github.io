@@ -16,8 +16,9 @@
     }
   ],
   "ignorePatterns": [
-    "/_deprecated/",
     "*.d.ts",
+    "/_deprecated/",
+    "/@q3s/core/core.js",
     "/@q3s/core/external.js"
   ]
 }

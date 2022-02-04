@@ -3,6 +3,8 @@
   "exclude": [
     "_deprecated/**",
     "coverage/**",
-    "docs/**"
+    "docs/**",
+    "@q3s/core/core.js",
+    "@q3s/core/external.js"
   ]
 }

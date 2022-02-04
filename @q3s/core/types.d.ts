@@ -1,5 +1,4 @@
-declare module '@q3s/core/data' {
-
+declare module '__data__' {
 
   interface deflate {
     /**
@@ -19,7 +18,22 @@ declare module '@q3s/core/data' {
     (base64url: string): string
   }
 
-
   export const deflate: deflate
   export const inflate: inflate
+
+}
+
+declare module '__external__' {
+
+  import pako from 'pako'
+
+  export { pako }
+
+}
+
+declare module '@q3s/core' {
+
+  export * from '__data__'
+  export * as external from '__external__'
+
 }

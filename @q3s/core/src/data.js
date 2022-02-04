@@ -1,9 +1,10 @@
-import { pako } from './external.js'
+import * as external from './external.js'
 
+const { pako } = external
 const { btoa, atob } = window
 
 
-/** @type {import('@q3s/core/data').deflate} */
+/** @type {import('__data__').deflate} */
 function deflate(text) {
   const rawData = pako.deflateRaw(text)
   let chars = ''
@@ -20,7 +21,7 @@ function deflate(text) {
   return base64url
 }
 
-/** @type {import('@q3s/core/data').inflate} */
+/** @type {import('__data__').inflate} */
 function inflate(base64url) {
   const chars = atob(base64url
     .replaceAll('-', '+')
