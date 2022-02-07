@@ -14,7 +14,6 @@
   },
   "files": [
     "core.js",
-    "data.js",
     "external.js",
     "types.d.ts"
   ],
