@@ -1,22 +1,24 @@
 // @ts-ignore
 import { assert, Test } from '@nodutilus/test'
-import { external, deflate, inflate } from '@q3s/core'
-// import { deflateX64, inflateX64 } from '../_deprecated/lib/data.js'
-
 
 /**
  * Проверка работы со сжатием URL
  */
 export class Tq3sCoreData extends Test {
 
+  /** Подготовка окружения для тестирования */
+  async [Test.before]() {
+    this.q3s = await import(process.argv.includes('--dev') ? '../@q3s/core/src/core.js' : '@q3s/core')
+  }
+
   /** Проверка из примера в описании алгоритма на соответсвие base64url из Node.js */
   ['deflate, inflate - base64url']() {
     const text = 'Привет й34ой387:[]хъХЪ{}""%К*№?СИЙ?*К(*?№ЙЕ%К(?*Й№КП(ТЙ?КП'
-    const uint8Array = external.pako.deflateRaw(text)
+    const uint8Array = this.q3s.external.pako.deflateRaw(text)
     const base64urlNode = Buffer.from(uint8Array).toString('base64url')
-    const outerTextNode = external.pako.inflateRaw(Buffer.from(base64urlNode, 'base64url'), { to: 'string' })
-    const base64url = deflate(text)
-    const outerText = inflate(base64url)
+    const outerTextNode = this.q3s.external.pako.inflateRaw(Buffer.from(base64urlNode, 'base64url'), { to: 'string' })
+    const base64url = this.q3s.deflate(text)
+    const outerText = this.q3s.inflate(base64url)
     const base64native = Buffer.from(text, 'utf-8').toString('base64url')
 
     assert.equal(text, outerTextNode)
@@ -30,31 +32,23 @@ export class Tq3sCoreData extends Test {
 
   /** Примеры сжатия и восстановления данных */
   ['deflate, inflate - examples']() {
-    assert.equal(deflate('Тест'), 'u7DowtaLjRebAA')
-    assert.equal(deflate('Тест1'), 'u7DowtaLjRebDAE')
-    assert.equal(deflate('Тест123'), 'u7DowtaLjRebDI2MAQ')
-    assert.equal(deflate("{ 'start': { 'line': 3, 'column': 0 }, 'end': { 'line': 5, 'column': 1 } }"),
+    assert.equal(this.q3s.deflate('Тест'), 'u7DowtaLjRebAA')
+    assert.equal(this.q3s.deflate('Тест1'), 'u7DowtaLjRebDAE')
+    assert.equal(this.q3s.deflate('Тест123'), 'u7DowtaLjRebDI2MAQ')
+    assert.equal(this.q3s.deflate("{ 'start': { 'line': 3, 'column': 0 }, 'end': { 'line': 5, 'column': 1 } }"),
       'q1ZQLy5JLCpRt1KoVlDPycxLBbKMdRTUk_NzSnPzgBwDhVogNzUvBUWJKbISQ4VahVoA')
 
-    // deprecated
-    // assert.equal(deflateX64('Тест'), 'KX3EMJqbzhur.0')
-    // assert.equal(deflateX64('Тест1'), 'KX3EMJqbzhur30.1')
-    // assert.equal(deflateX64('Тест123'), 'KX3EMJqbzhur38Sc.1')
-    // assert.equal(deflateX64("{ 'start': { 'line': 3, 'column': 0 }, 'end': { 'line': 5, 'column': 1 } }"),
-    //   'GRpgbOV9b2FhJRaElB3fOsNb1racthjkA_dPiDfPw1M3xlEwdPkL1km9ar8igUlqxlE0')
-
-    assert.equal(inflate('u7DowtaLjRebAA'), 'Тест')
-    assert.equal(inflate('u7DowtaLjRebDAE'), 'Тест1')
-    assert.equal(inflate('u7DowtaLjRebDI2MAQ'), 'Тест123')
-    assert.equal(inflate('q1ZQLy5JLCpRt1KoVlDPycxLBbKMdRTUk_NzSnPzgBwDhVogNzUvBUWJKbISQ4VahVoA'),
+    assert.equal(this.q3s.inflate('u7DowtaLjRebAA'), 'Тест')
+    assert.equal(this.q3s.inflate('u7DowtaLjRebDAE'), 'Тест1')
+    assert.equal(this.q3s.inflate('u7DowtaLjRebDI2MAQ'), 'Тест123')
+    assert.equal(this.q3s.inflate('q1ZQLy5JLCpRt1KoVlDPycxLBbKMdRTUk_NzSnPzgBwDhVogNzUvBUWJKbISQ4VahVoA'),
       "{ 'start': { 'line': 3, 'column': 0 }, 'end': { 'line': 5, 'column': 1 } }")
+  }
 
-    // deprecated
-    // assert.equal(inflateX64('KX3EMJqbzhur.0'), 'Тест')
-    // assert.equal(inflateX64('KX3EMJqbzhur30.1'), 'Тест1')
-    // assert.equal(inflateX64('KX3EMJqbzhur38Sc.1'), 'Тест123')
-    // assert.equal(inflateX64('GRpgbOV9b2FhJRaElB3fOsNb1racthjkA_dPiDfPw1M3xlEwdPkL1km9ar8igUlqxlE0'),
-    //   "{ 'start': { 'line': 3, 'column': 0 }, 'end': { 'line': 5, 'column': 1 } }")
+  ['DataURL - base']() {
+    const dataURL = new this.q3s.DataURL()
+
+    console.log(dataURL.href)
   }
 
 }

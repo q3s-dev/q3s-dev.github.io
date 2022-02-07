@@ -1,7 +1,7 @@
 import * as external from './external.js'
 
 const { pako } = external
-const { btoa, atob } = window
+const { btoa, atob, URL, location } = window
 
 
 /** @type {import('__data__').deflate} */
@@ -39,7 +39,19 @@ function inflate(base64url) {
 }
 
 
+class DataURL extends URL {
+
+  data = ''
+
+  constructor(url = location.origin) {
+    super(url)
+  }
+
+}
+
+
 export {
   deflate,
-  inflate
+  inflate,
+  DataURL
 }
