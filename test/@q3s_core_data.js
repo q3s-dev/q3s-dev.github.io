@@ -48,6 +48,12 @@ export class Tq3sCoreData extends Test {
   ['DataURL - base']() {
     const dataURL = new this.q3s.DataURL()
 
+    dataURL.application = 'q3s-dev.github.io'
+    assert.equal(dataURL.application, 'q3s-dev.github.io')
+    dataURL.application = 'тест'
+    assert.equal(dataURL.application, 'q3s-dev.github.io')
+
+
     console.log(dataURL.href)
   }
 

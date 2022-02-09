@@ -2,6 +2,9 @@ import * as external from './external.js'
 
 const { pako } = external
 const { btoa, atob, URL, location } = window
+const urlValidCharsSet = ".#=?/:,;@+!~*'()" + // available in URLSearchParams
+  '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ\\-_' // base64url
+const urlValidCharsRE = new RegExp(`^[${urlValidCharsSet}]+$`)
 
 
 /** @type {import('__data__').deflate} */
@@ -41,7 +44,29 @@ function inflate(base64url) {
 
 class DataURL extends URL {
 
-  data = ''
+  #application = ''
+
+  #data = ''
+
+  get application() {
+    return this.#application
+  }
+
+  set application(value) {
+    const valid = urlValidCharsRE.test(String(value))
+
+    if (valid) {
+      this.#application = value
+    }
+  }
+
+  get data() {
+    return this.#data
+  }
+
+  set data(value) {
+    this.#data = value
+  }
 
   constructor(url = location.origin) {
     super(url)
