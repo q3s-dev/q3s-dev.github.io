@@ -52,9 +52,36 @@ export class Tq3sCoreData extends Test {
     assert.equal(dataURL.application, 'q3s-dev.github.io')
     dataURL.application = 'тест'
     assert.equal(dataURL.application, 'q3s-dev.github.io')
+    assert.equal(dataURL.href, 'https://q3s.github.io/#q3s-dev.github.io=')
 
+    dataURL.data = 'Тест'
+    assert.equal(dataURL.data, 'Тест')
+    assert.equal(dataURL.encoded, 'u7DowtaLjRebAA')
+    assert.equal(dataURL.href, 'https://q3s.github.io/#q3s-dev.github.io=u7DowtaLjRebAA')
 
-    console.log(dataURL.href)
+    dataURL.application = ''
+    assert.equal(dataURL.application, '')
+    assert.equal(dataURL.href, 'https://q3s.github.io/#=u7DowtaLjRebAA')
+  }
+
+  ['DataURL - restore']() {
+    const dataURL1 = new this.q3s.DataURL('https://q3s.github.io/#q3s-dev.github.io=')
+    const dataURL2 = new this.q3s.DataURL('https://q3s.github.io/#q3s-dev.github.io=u7DowtaLjRebAA')
+    const dataURL3 = new this.q3s.DataURL('https://q3s.github.io/#=u7DowtaLjRebAA')
+
+    assert.equal(dataURL1.application, 'q3s-dev.github.io')
+    assert.equal(dataURL1.data, '')
+    assert.equal(dataURL1.href, 'https://q3s.github.io/#q3s-dev.github.io=')
+
+    assert.equal(dataURL2.application, 'q3s-dev.github.io')
+    assert.equal(dataURL2.data, 'Тест')
+    assert.equal(dataURL2.encoded, 'u7DowtaLjRebAA')
+    assert.equal(dataURL2.href, 'https://q3s.github.io/#q3s-dev.github.io=u7DowtaLjRebAA')
+
+    assert.equal(dataURL3.application, '')
+    assert.equal(dataURL3.data, 'Тест')
+    assert.equal(dataURL3.encoded, 'u7DowtaLjRebAA')
+    assert.equal(dataURL3.href, 'https://q3s.github.io/#=u7DowtaLjRebAA')
   }
 
 }

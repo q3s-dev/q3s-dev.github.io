@@ -1,10 +1,10 @@
 import * as external from './external.js'
 
 const { pako } = external
-const { btoa, atob, URL, location } = window
+const { btoa, atob, URL, location, URLSearchParams } = window
 const urlValidCharsSet = ".#=?/:,;@+!~*'()" + // available in URLSearchParams
   '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ\\-_' // base64url
-const urlValidCharsRE = new RegExp(`^[${urlValidCharsSet}]+$`)
+const urlValidCharsRE = new RegExp(`^[${urlValidCharsSet}]*$`)
 
 
 /** @type {import('__data__').deflate} */
@@ -42,20 +42,20 @@ function inflate(base64url) {
 }
 
 
-class DataURL extends URL {
+class DataURL {
 
+  #url = null
   #application = ''
-
   #data = ''
+  #encoded = ''
 
   get application() {
     return this.#application
   }
 
   set application(value) {
-    const valid = urlValidCharsRE.test(String(value))
-
-    if (valid) {
+    value = String(value)
+    if (urlValidCharsRE.test(value)) {
       this.#application = value
     }
   }
@@ -65,11 +65,41 @@ class DataURL extends URL {
   }
 
   set data(value) {
-    this.#data = value
+    this.#data = String(value)
+    this.#encoded = this.#data ? deflate(this.#data) : ''
   }
 
-  constructor(url = location.origin) {
-    super(url)
+  get encoded() {
+    return this.#encoded
+  }
+
+  set encoded(value) {
+    this.#encoded = String(value)
+    this.#data = this.#encoded ? inflate(this.#encoded) : ''
+  }
+
+  get href() {
+    this.#url.hash = new URLSearchParams([[this.#application, this.#encoded]])
+
+    return this.#url.href
+  }
+
+  constructor(href = location.origin) {
+    const url = new URL(href)
+
+    this.#url = new URL(url.origin + url.pathname)
+
+    if (url.hash) {
+      const params = new URLSearchParams(url.hash.slice(1))
+
+      for (const [application, encoded] of params.entries()) {
+        if (urlValidCharsRE.test(application)) {
+          this.application = application
+          this.encoded = encoded
+          break
+        }
+      }
+    }
   }
 
 }
