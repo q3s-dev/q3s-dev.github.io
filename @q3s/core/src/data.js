@@ -65,8 +65,8 @@ class DataURL {
   }
 
   set data(value) {
-    this.#data = String(value)
-    this.#encoded = this.#data ? deflate(this.#data) : ''
+    this.#encoded = deflate(value)
+    this.#data = value
   }
 
   get encoded() {
@@ -74,12 +74,18 @@ class DataURL {
   }
 
   set encoded(value) {
-    this.#encoded = String(value)
-    this.#data = this.#encoded ? inflate(this.#encoded) : ''
+    this.#data = inflate(value)
+    if (typeof this.#data === 'string') {
+      this.#encoded = value
+    } else {
+      this.#data = this.#encoded = ''
+    }
   }
 
   get href() {
-    this.#url.hash = new URLSearchParams([[this.#application, this.#encoded]])
+    if (this.#application || this.#encoded) {
+      this.#url.hash = new URLSearchParams([[this.#application, this.#encoded]])
+    }
 
     return this.#url.href
   }

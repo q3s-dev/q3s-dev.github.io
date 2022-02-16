@@ -84,4 +84,57 @@ export class Tq3sCoreData extends Test {
     assert.equal(dataURL3.href, 'https://q3s.github.io/#=u7DowtaLjRebAA')
   }
 
+  ['DataURL - errors']() {
+    const dataURL = new this.q3s.DataURL()
+    let err = null
+
+    try {
+      dataURL.encoded = 'Тест'
+    } catch (error) {
+      err = error
+    }
+    assert.equal(err.message, 'The string to be decoded contains invalid characters.')
+    assert.equal(dataURL.data, '')
+    assert.equal(dataURL.encoded, '')
+    assert.equal(dataURL.href, 'https://q3s.github.io/')
+
+    err = null
+    try {
+      dataURL.encoded = null
+    } catch (error) {
+      err = error
+    }
+    assert.equal(err.message, "Cannot read properties of null (reading 'replaceAll')")
+    assert.equal(dataURL.data, '')
+    assert.equal(dataURL.encoded, '')
+    assert.equal(dataURL.href, 'https://q3s.github.io/')
+
+    err = null
+    try {
+      dataURL.data = null
+    } catch (error) {
+      err = error
+    }
+    assert.equal(err.message, "Cannot read properties of null (reading 'length')")
+    assert.equal(dataURL.data, '')
+    assert.equal(dataURL.encoded, '')
+    assert.equal(dataURL.href, 'https://q3s.github.io/')
+
+    err = null
+    try {
+      dataURL.data = 1
+    } catch (error) {
+      err = error
+    }
+    assert.equal(err.message, 'strm.input.subarray is not a function')
+    assert.equal(dataURL.data, '')
+    assert.equal(dataURL.encoded, '')
+    assert.equal(dataURL.href, 'https://q3s.github.io/')
+
+    dataURL.encoded = 'qwe'
+    assert.equal(dataURL.data, '')
+    assert.equal(dataURL.encoded, '')
+    assert.equal(dataURL.href, 'https://q3s.github.io/')
+  }
+
 }
