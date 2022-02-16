@@ -24,7 +24,7 @@
   "scripts": {
     "build": "npx rollup --config",
     "pre-test": "node test/pre-test",
-    "test": "node test",
+    "test": "node test --dev && node test",
     "test-web": "node test/web.js"
   }
 }
