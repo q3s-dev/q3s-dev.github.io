@@ -126,7 +126,7 @@ export class Tq3sCoreData extends Test {
     } catch (error) {
       err = error
     }
-    assert.equal(err.message, 'strm.input.subarray is not a function')
+    assert.ok(err.message.endsWith('subarray is not a function'))
     assert.equal(dataURL.data, '')
     assert.equal(dataURL.encoded, '')
     assert.equal(dataURL.href, 'https://q3s.github.io/')
