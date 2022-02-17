@@ -8,6 +8,7 @@ export class Tq3sCoreData extends Test {
 
   /** Подготовка окружения для тестирования */
   async [Test.before]() {
+    /** @type {import('@q3s/core')} */
     this.q3s = await import(process.argv.includes('--dev') ? '../@q3s/core/src/core.js' : '@q3s/core')
   }
 
@@ -51,6 +52,8 @@ export class Tq3sCoreData extends Test {
     dataURL.application = 'q3s-dev.github.io'
     assert.equal(dataURL.application, 'q3s-dev.github.io')
     dataURL.application = 'тест'
+    assert.equal(dataURL.application, 'q3s-dev.github.io')
+    dataURL.application = null
     assert.equal(dataURL.application, 'q3s-dev.github.io')
     assert.equal(dataURL.href, 'https://q3s.github.io/#q3s-dev.github.io=')
 
@@ -122,6 +125,7 @@ export class Tq3sCoreData extends Test {
 
     err = null
     try {
+      // @ts-ignore
       dataURL.data = 1
     } catch (error) {
       err = error

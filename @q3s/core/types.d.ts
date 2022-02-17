@@ -18,6 +18,23 @@ declare module '__data__' {
     (base64url: string): string
   }
 
+  /**
+   * Позволяет сохранять данные в URL в виде строки base64url,
+   *  с привязкой к приложению для которого предназначены данные
+   */
+  export class DataURL {
+
+    /** Адрес приложения для которого предназначены данные */
+    application: string
+    /** Строка с данными в исходном виде */
+    data: string
+    /** Строка с данными в формате base64url */
+    encoded: string
+    /** Итоговый URL со всеми данными */
+    href: string
+
+  }
+
   export const deflate: deflate
   export const inflate: inflate
 

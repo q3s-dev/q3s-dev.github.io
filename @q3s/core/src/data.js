@@ -42,6 +42,7 @@ function inflate(base64url) {
 }
 
 
+/** @type {import('__data__').DataURL} */
 class DataURL {
 
   #url = null
@@ -49,30 +50,35 @@ class DataURL {
   #data = ''
   #encoded = ''
 
+  /** @type {string} */
   get application() {
     return this.#application
   }
 
+  /** @type {string} */
   set application(value) {
-    value = String(value)
-    if (urlValidCharsRE.test(value)) {
+    if (typeof value === 'string' && urlValidCharsRE.test(value)) {
       this.#application = value
     }
   }
 
+  /** @type {string} */
   get data() {
     return this.#data
   }
 
+  /** @type {string} */
   set data(value) {
     this.#encoded = deflate(value)
     this.#data = value
   }
 
+  /** @type {string} */
   get encoded() {
     return this.#encoded
   }
 
+  /** @type {string} */
   set encoded(value) {
     this.#data = inflate(value)
     if (typeof this.#data === 'string') {
@@ -82,6 +88,7 @@ class DataURL {
     }
   }
 
+  /** @type {string} */
   get href() {
     if (this.#application || this.#encoded) {
       this.#url.hash = new URLSearchParams([[this.#application, this.#encoded]])
