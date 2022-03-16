@@ -46,6 +46,7 @@ export class Tq3sCoreData extends Test {
       "{ 'start': { 'line': 3, 'column': 0 }, 'end': { 'line': 5, 'column': 1 } }")
   }
 
+  /** Базовые сценарии создания ссылки содержащей данные */
   ['DataURL - base']() {
     const dataURL = new this.q3s.DataURL()
 
@@ -67,6 +68,7 @@ export class Tq3sCoreData extends Test {
     assert.equal(dataURL.href, 'https://q3s.github.io/#=u7DowtaLjRebAA')
   }
 
+  /** Базовые сценарии восстановления данных из ссылки в исходный вид */
   ['DataURL - restore']() {
     const dataURL1 = new this.q3s.DataURL('https://q3s.github.io/#q3s-dev.github.io=')
     const dataURL2 = new this.q3s.DataURL('https://q3s.github.io/#q3s-dev.github.io=u7DowtaLjRebAA')
