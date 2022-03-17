@@ -97,8 +97,9 @@ class DataURL {
     return this.#url.href
   }
 
-  constructor(href = location.origin) {
-    const url = new URL(href)
+  /** @type {string} */
+  set href(value) {
+    const url = new URL(value)
 
     this.#url = new URL(url.origin + url.pathname)
 
@@ -113,6 +114,10 @@ class DataURL {
         }
       }
     }
+  }
+
+  constructor(href = location.origin) {
+    this.href = href
   }
 
 }
