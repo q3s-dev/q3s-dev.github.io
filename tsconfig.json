@@ -1,0 +1,10 @@
+{
+  "extends": "@nodutilus/project-config/tsconfig",
+  "exclude": [
+    "_deprecated/**",
+    "coverage/**",
+    "docs/**",
+    "@q3s/core/core.js",
+    "@q3s/core/external.js"
+  ]
+}

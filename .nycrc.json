@@ -1,0 +1,12 @@
+{
+  "extends": "@nodutilus/project-config/nyc",
+  "exclude": [
+    "**/*.d.ts",
+    "_deprecated/",
+    "@q3s/core/src/",
+    "@q3s/core/external.js",
+    "test/pre-test.js",
+    "test/web.js",
+    "rollup.config.js"
+  ]
+}

@@ -1,6 +1,14 @@
+# Site tmp files
 /docs/_site/
 /docs/Gemfile.lock
 
-/build/
+# Dependency directories
+node_modules/
 
-/node_modules/
+# Output of 'npm pack'
+*.tgz
+
+# Generate output
+/coverage
+/@q3s/core/core.js
+/@q3s/core/external.js

@@ -1,15 +1,13 @@
 import './emulateDOM.js'
+// @ts-ignore
 import { Test } from '@nodutilus/test'
-import { Tx64url } from './lib/x64url.js'
-import { Tdataurl } from './lib/dataurl.js'
+import { Tq3sCoreData } from './@q3s_core_data.js'
 
 
 /** Общий тестовый класс */
 class TestQ3S extends Test {
 
-  static x64url = Tx64url
-
-  static dataurl = Tdataurl
+  static ['module: @q3s/core/data'] = Tq3sCoreData
 
 }
 
